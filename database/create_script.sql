@@ -9,7 +9,7 @@ CREATE TABLE position_level (
 -- Ex. `contact_role`: recruiter, referral, hiring manager
 CREATE TABLE contact_role (
   id      SERIAL PRIMARY KEY,
-  role    TEXT 
+  role    TEXT UNIQUE
 );
 
 CREATE TABLE contact (
@@ -49,7 +49,7 @@ CREATE TABLE job_application (
   date_applied    TIMESTAMPTZ,
   job_posting_id  INTEGER REFERENCES job_posting (id),
   user_id         INTEGER REFERENCES user_account (id) ON DELETE CASCADE,
-  referral_id     INTEGER REFERENCES contact_role (id)
+  referral_id     INTEGER REFERENCES contact_role (id),
   offer           INTEGER
 );
 

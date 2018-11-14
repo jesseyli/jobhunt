@@ -2,8 +2,10 @@ const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 
 require("dotenv").load();
-require("./config/db");
+const db = require("./config/db");
 
+const { getContactById, getContactRoles, getContacts } = require('./resolvers/query');
+const { addContact, addContactRole } = require('./resolvers/mutation');
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -39,6 +41,12 @@ const typeDefs = gql`
     name: String
     phoneNumber: String       # Create a PhoneNumber scalar
     email: String             # Create an Email scalar
+    role: String              # Should be an enum later
+  }
+
+  type ContactRole {
+    roleId: Int
+    role: String
   }
 
   type Interaction {
@@ -79,26 +87,33 @@ const typeDefs = gql`
   }
 
   type Query {
-    hello: String
+    getContactById(id: Int): Contact
+    getContactRoles: [ContactRole]
+    getContacts: [Contact]
+    # getJobAppStatus(jobAppId: Int): JobAppStatus
   }
 
-  # type Mutation {
+  type Mutation {
+    addContactRole(role: String): ContactRole
+    addContact(name: String, phoneNumber: String, email: String, roleId: Int): Contact
   #   addReferral(name: String, phoneNumber: String, email: String): Contact
-  #   addContact(name: String, phoneNumber: String, email: String): Contact
   #   addJobPosting(jobPost: JobPostInput): JobPosting
   #   addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
   #   addInteraction(details: InteractionInput): Interaction
-  # }
+  }
 `;
 
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
+    getContactById,
+    getContacts,
+    getContactRoles
   },
-  // Mutation: {
-  //   addJobPost: (_, args) => args
-  // }
+  Mutation: {
+    addContactRole,
+    addContact
+  }
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
