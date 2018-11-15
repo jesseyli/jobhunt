@@ -131,16 +131,69 @@ const getJobPostings = async () => {
       ...rest
     }));
 
-  
+
   } catch (err) {
     console.error(err.message || err);
   }
 }
+
+const getAllUsers = async (_, args) => {
+  try {
+    const queryStr = `
+      SELECT 
+        user_account.id,
+        username,
+        name,
+        email,
+        phone_number,
+        position_level.role
+      FROM 
+        user_account
+      INNER JOIN position_level ON user_account.position_level_id = position_level.id
+    `;
+    const users = await db.any(queryStr);
+
+    return users.map(({
+      id: userId,
+      phone_number: phoneNumber,
+      role: position,
+      ...rest
+    }) => ({
+      userId,
+      phoneNumber,
+      position,
+      ...rest
+    }));
+
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
+const getStatuses = async () => {
+  try {
+
+    const queryStr = `
+      SELECT id, status
+      FROM job_status
+    `;
+
+    const statuses = await db.any(queryStr);
+
+    return statuses.map(({ id, status }) => ({ statusId: id, status }));
+    
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
 
 module.exports = {
   getContacts,
   getContactById,
   getContactRoles,
   getPositionLevels,
-  getJobPostings
+  getJobPostings,
+  getAllUsers,
+  getStatuses
 }

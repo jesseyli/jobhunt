@@ -2,21 +2,24 @@ const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 
 require("dotenv").load();
-const db = require("./config/db");
+require("./config/db");
 
 const {
   getContactById,
   getContactRoles,
   getContacts,
   getPositionLevels,
-  getJobPostings
+  getJobPostings,
+  getAllUsers,
+  getStatuses
 } = require('./resolvers/query');
 const {
   addContact,
   addContactRole,
   addJobPosting,
   addPositionLevel,
-  addUser
+  addUser,
+  addStatus
 } = require('./resolvers/mutation');
 
 // Construct a schema, using GraphQL schema language
@@ -106,12 +109,18 @@ const typeDefs = gql`
 
   type JobAppStatus {
     jobApplication: JobApplication
-    status: String
+    status: String                  # based on the status table
     followUpDate: String            # Date
     offer: Int                      # Will be null until it is given
     contacts: [Contact]
     interactions: [Interaction] 
   }
+  
+  type Status {
+    statusId: Int
+    status: String
+  }
+  
 
   type Query {
     getContactById(id: Int): Contact
@@ -119,6 +128,8 @@ const typeDefs = gql`
     getContacts: [Contact]
     getPositionLevels: [PositionLevel]
     getJobPostings: [JobPosting]
+    getAllUsers: [User]
+    getStatuses: [Status]
     # getJobAppStatus(jobAppId: Int): JobAppStatus
   }
 
@@ -127,8 +138,9 @@ const typeDefs = gql`
     addContact(name: String, phoneNumber: String, email: String, roleId: Int): Contact
     addJobPosting(jobPost: JobPostInput): JobPosting
     addPositionLevel(position: String): PositionLevel
-    addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User 
-  #   addReferral(name: String, phoneNumber: String, email: String): Contact
+    addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User
+    addStatus(newStatus: String): Status
+  #   addReferral(name: String, phoneNumber: String, email: String, jobId: Int): Contact
   #   addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
   #   addInteraction(details: InteractionInput): Interaction
   }
@@ -141,14 +153,17 @@ const resolvers = {
     getContacts,
     getContactRoles,
     getPositionLevels,
-    getJobPostings
+    getJobPostings,
+    getAllUsers,
+    getStatuses
   },
   Mutation: {
     addContactRole,
     addContact,
     addJobPosting,
     addPositionLevel,
-    addUser
+    addUser,
+    addStatus
   }
 };
 

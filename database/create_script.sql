@@ -70,7 +70,7 @@ CREATE TABLE contact_type (
 
 CREATE TABLE job_status (
   id        SERIAL PRIMARY KEY,
-  status    TEXT
+  status    TEXT UNIQUE
 );
 
 -- Build a follow-up table; these are each encounters

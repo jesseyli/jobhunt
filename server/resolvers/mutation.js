@@ -204,7 +204,7 @@ const addUser = async (_, args) => {
       WHERE id = $(positionId)
       `;
     let { role: position } = await db.one(queryStr, { positionId: args.positionId })
-    
+
     return {
       userId,
       username,
@@ -219,6 +219,27 @@ const addUser = async (_, args) => {
   }
 }
 
+const addStatus = async (_, args) => {
+  try {
+    const insertStr = `
+      INSERT INTO job_status(status)
+      VALUES
+        ($(newStatus))
+      RETURNING id, status
+    `;
+
+    const { id: statusId, status } = await db.one(insertStr, { newStatus: args.newStatus })
+
+    return {
+      statusId,
+      status
+    }
+    
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
 module.exports = {
   addReferral,
   addContactRole,
@@ -227,5 +248,6 @@ module.exports = {
   addJobApplication,
   addInteraction,
   addPositionLevel,
-  addUser
+  addUser,
+  addStatus
 }
