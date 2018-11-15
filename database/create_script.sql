@@ -3,7 +3,7 @@ CREATE EXTENSION citext;
 -- Ex. `position_level`: junior / midlevel / senior / non-categorized
 CREATE TABLE position_level (
   id      SERIAL PRIMARY KEY,
-  role    TEXT
+  role    TEXT UNIQUE
 );
 
 -- Ex. `contact_role`: recruiter, referral, hiring manager

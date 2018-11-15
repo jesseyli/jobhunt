@@ -4,8 +4,20 @@ const { ApolloServer, gql } = require('apollo-server-express');
 require("dotenv").load();
 const db = require("./config/db");
 
-const { getContactById, getContactRoles, getContacts } = require('./resolvers/query');
-const { addContact, addContactRole } = require('./resolvers/mutation');
+const {
+  getContactById,
+  getContactRoles,
+  getContacts,
+  getPositionLevels,
+  getJobPostings
+} = require('./resolvers/query');
+const {
+  addContact,
+  addContactRole,
+  addJobPosting,
+  addPositionLevel,
+  addUser
+} = require('./resolvers/mutation');
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -17,14 +29,14 @@ const typeDefs = gql`
   }
 
   input JobPostInput {
-    company_name: String!
-    post_link: String!        # URL
+    companyName: String!
+    postLink: String!        # URL
     title: String!
     description: String
     requirement: String
-    salary_range_start: Int
-    salary_range_end: Int
-    position_level_id: Int   # DB pkey for position level
+    salaryRangeStart: Int
+    salaryRangeEnd: Int
+    positionLevelId: Int   # DB pkey for position level
   }
 
   input InteractionInput {
@@ -34,6 +46,15 @@ const typeDefs = gql`
     statusId: Int!
     description: String
     followUpDate: String  # Date Type
+  }
+
+  type User {
+    userId: Int
+    name: String
+    username: String
+    phoneNumber: String
+    email: String
+    position: String
   }
 
   type Contact {
@@ -49,6 +70,11 @@ const typeDefs = gql`
     role: String
   }
 
+  type PositionLevel {
+    positionId: Int
+    position: String
+  }
+
   type Interaction {
     appId: Int
     contact: Contact
@@ -60,14 +86,14 @@ const typeDefs = gql`
 
   type JobPosting {
     id: Int
-    company_name: String
-    post_link: String         # URL
+    companyName: String
+    postLink: String         # URL
     title: String
     description: String
     requirement: String
-    salary_range_start: Int
-    salary_range_end: Int
-    position_level: String    # 'junior', 'senior', etc.
+    salaryRangeStart: Int
+    salaryRangeEnd: Int
+    positionLevel: String    # 'junior', 'senior', etc.
   }
 
   type JobApplication {
@@ -75,6 +101,7 @@ const typeDefs = gql`
     dateApplied: String     # Date
     referral: Contact
     jobPosting: JobPosting!
+    user: User
   }
 
   type JobAppStatus {
@@ -90,14 +117,18 @@ const typeDefs = gql`
     getContactById(id: Int): Contact
     getContactRoles: [ContactRole]
     getContacts: [Contact]
+    getPositionLevels: [PositionLevel]
+    getJobPostings: [JobPosting]
     # getJobAppStatus(jobAppId: Int): JobAppStatus
   }
 
   type Mutation {
     addContactRole(role: String): ContactRole
     addContact(name: String, phoneNumber: String, email: String, roleId: Int): Contact
+    addJobPosting(jobPost: JobPostInput): JobPosting
+    addPositionLevel(position: String): PositionLevel
+    addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User 
   #   addReferral(name: String, phoneNumber: String, email: String): Contact
-  #   addJobPosting(jobPost: JobPostInput): JobPosting
   #   addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
   #   addInteraction(details: InteractionInput): Interaction
   }
@@ -108,11 +139,16 @@ const resolvers = {
   Query: {
     getContactById,
     getContacts,
-    getContactRoles
+    getContactRoles,
+    getPositionLevels,
+    getJobPostings
   },
   Mutation: {
     addContactRole,
-    addContact
+    addContact,
+    addJobPosting,
+    addPositionLevel,
+    addUser
   }
 };
 
