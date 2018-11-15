@@ -23,7 +23,7 @@ CREATE TABLE contact (
 CREATE TABLE job_posting (
   id                    SERIAL PRIMARY KEY,
   company_name          TEXT NOT NULL,
-  post_link             TEXT NOT NULL,
+  post_link             TEXT NOT NULL UNIQUE,
   title                 TEXT NOT NULL,
   description           TEXT,
   requirement           TEXT,
@@ -53,21 +53,14 @@ CREATE TABLE job_application (
   offer           INTEGER
 );
 
--- Only create a `contact_application` if there is someone who assisted or contacted you
--- This is for adding a recruiter
-CREATE TABLE contact_application (
-  id                    SERIAL PRIMARY KEY,
-  job_application_id    INTEGER REFERENCES job_application (id),
-  contact_id            INTEGER REFERENCES contact (id) NOT NULL,
-  description           TEXT
-);
 
 -- Ex. 'text', 'phone call', 'email', 'video chat'
 CREATE TABLE contact_type (
   id      SERIAL PRIMARY KEY,
-  type    TEXT
+  type    TEXT UNIQUE
 );
 
+-- DECLINED, REJECTED, OFFER, SUBMITTED, INTERVIEW
 CREATE TABLE job_status (
   id        SERIAL PRIMARY KEY,
   status    TEXT UNIQUE
@@ -80,6 +73,7 @@ CREATE TABLE interaction (
   job_application_id    INTEGER REFERENCES job_application (id) NOT NULL,
   contact_type_id       INTEGER REFERENCES contact_type (id) NOT NULL,
   job_status_id         INTEGER REFERENCES job_status (id) NOT NULL,
-  follow_up_date        TIMESTAMPTZ
+  follow_up_date        TIMESTAMPTZ,
+  log                   TEXT
 );
 

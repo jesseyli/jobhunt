@@ -19,7 +19,9 @@ const {
   addJobPosting,
   addPositionLevel,
   addUser,
-  addStatus
+  addStatus,
+  addReferral,
+  addJobApplication,
 } = require('./resolvers/mutation');
 
 // Construct a schema, using GraphQL schema language
@@ -121,7 +123,6 @@ const typeDefs = gql`
     status: String
   }
   
-
   type Query {
     getContactById(id: Int): Contact
     getContactRoles: [ContactRole]
@@ -140,8 +141,8 @@ const typeDefs = gql`
     addPositionLevel(position: String): PositionLevel
     addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User
     addStatus(newStatus: String): Status
-  #   addReferral(name: String, phoneNumber: String, email: String, jobId: Int): Contact
-  #   addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
+    addReferral(name: String, phoneNumber: String, email: String, jobAppId: Int): Contact
+    addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
   #   addInteraction(details: InteractionInput): Interaction
   }
 `;
@@ -163,7 +164,9 @@ const resolvers = {
     addJobPosting,
     addPositionLevel,
     addUser,
-    addStatus
+    addStatus,
+    addReferral,
+    addJobApplication,
   }
 };
 

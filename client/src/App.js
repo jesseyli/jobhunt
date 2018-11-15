@@ -17,6 +17,7 @@ class App extends Component {
         <Table
           columns={['first name', 'last name', 'city', 'state']}
           rows={this.state.rows}
+          accessor="value"
           onClick={row => console.log("CLICKED:", row)}
         />
         <MultiPartForm

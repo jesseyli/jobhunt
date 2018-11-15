@@ -1,9 +1,5 @@
 const db = require("../config/db");
 
-const addReferral = async (_, args) => {
-
-}
-
 const addContactRole = async (_, args) => {
   try {
     const insertStr = `
@@ -101,15 +97,11 @@ const addJobPosting = async (_, { jobPost }) => {
     `;
 
     const {
-      id,
       company_name: companyName,
       post_link: postLink,
-      title,
-      description,
-      requirement,
       salary_range_start: salaryRangeStart,
       salary_range_end: salaryRangeEnd,
-      position_level_id
+      ...rest
     } = await db.one(insertStr, jobPost);
 
     const queryStr = `
@@ -121,18 +113,15 @@ const addJobPosting = async (_, { jobPost }) => {
       WHERE id = $(position_level_id)
       `;
 
-    let { role: positionLevel } = await db.one(queryStr, { position_level_id });
+    let { role: positionLevel } = await db.one(queryStr, { position_level_id: rest.position_level_id });
 
     return {
-      id,
       companyName,
       postLink,
-      title,
-      description,
-      requirement,
       salaryRangeStart,
       salaryRangeEnd,
-      positionLevel
+      positionLevel,
+      ...rest
     }
 
   } catch (err) {
@@ -155,10 +144,6 @@ const addPositionLevel = async (_, args) => {
   } catch (err) {
     console.error(err.message || err);
   }
-}
-
-const addJobApplication = async (_, args) => {
-
 }
 
 
@@ -234,11 +219,63 @@ const addStatus = async (_, args) => {
       statusId,
       status
     }
-    
+
   } catch (err) {
     console.error(err.message || err);
   }
 }
+
+const addReferral = async (_, args) => {
+  try {
+    const { name, phoneNumber, email, jobAppId } = args;
+
+    // find id of 'reference'; you can hardcode this later if you wish (?)
+    const queryStr = `
+      SELECT id
+      FROM contact_role
+      WHERE role = 'reference'
+    `;
+
+    let { id: contactRoleId } = await db.one(queryStr);
+
+    const insertStr = `
+      INSERT INTO contact(name, phone_number, email, contact_role_id)
+      VALUES
+        ($(name), $(phoneNumber), $(email), $(contactRoleId))
+      RETURNING
+        id, name, phone_number, email, contact_role_id
+    `;
+
+    let { id: referralId, ...rest } = await db.one(insertStr, { name, phoneNumber, email, contactRoleId });
+
+    const updateStr = `
+      UPDATE job_application
+      SET referral_id = $(referralId)
+      WHERE id = $(jobAppId)
+    `;
+
+    await db.none(updateStr, { referralId, jobAppId });
+
+    return {
+      referenceId: referralId,
+      name: rest.name,
+      phoneNumber: rest.phoneNumber,
+      email: rest.email,
+      role: 'reference'
+    }
+
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+const addJobApplication = async (_, args) => {
+  try {
+
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
 
 module.exports = {
   addReferral,
@@ -249,5 +286,5 @@ module.exports = {
   addInteraction,
   addPositionLevel,
   addUser,
-  addStatus
+  addStatus,
 }

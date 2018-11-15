@@ -7,7 +7,7 @@ class Table extends Component {
   state = {}
 
   render() {
-    let { columns, rows, onClick } = this.props;
+    let { columns, rows, onClick, accessor } = this.props;
 
     return (
       <table className="fixed_header">
@@ -17,7 +17,7 @@ class Table extends Component {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, i) => <Row key={i} row={row} onClick={onClick} />)}
+          {rows.map((row, i) => <Row key={i} row={row} accessor={accessor} onClick={onClick} />)}
         </tbody>
       </table>
     );
