@@ -60,6 +60,23 @@ const addContact = async (_, args) => {
   }
 }
 
+const addContactType = async (_, args) => {
+  try {
+    const insertStr = `
+    INSERT INTO contact_type(type)
+    VALUES ($(type))
+    RETURNING id, type
+    `
+    const { id: typeId, type } = await db.one(insertStr, { type: args.type });
+    return {
+      typeId,
+      type
+    }
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
 const addJobPosting = async (_, { jobPost }) => {
   try {
     const insertStr = `
@@ -147,8 +164,80 @@ const addPositionLevel = async (_, args) => {
 }
 
 
-const addInteraction = async (_, args) => {
+const addInteraction = async (_, { details }) => {
+  try {
+    const insertStr = `
+      INSERT INTO interaction(
+        contact_id,
+        job_application_id,
+        contact_type_id,
+        job_status_id,
+        follow_up_date,
+        log
+      )
+      VALUES
+        ($(contactId), $(appId), $(contactTypeId), $(statusId), $(followUpDate), $(description))
+      RETURNING
+      id,
+      contact_id,
+      job_application_id,
+      contact_type_id,
+      job_status_id,
+      follow_up_date,
+      log
+    `;
+    const {
+      id: interactionId,
+      contact_id,
+      job_application_id: appId,
+      contact_type_id,
+      job_status_id,
+      follow_up_date: followUpDate,
+      log: description
+    } = await db.one(insertStr, details);
 
+    const contactQueryStr = `
+    SELECT 
+      id,
+      name,
+      phone_number,
+      email,
+      contact_role_id
+    FROM contact
+    WHERE id = $(contact_id)
+    `
+    const contact = await db.one(contactQueryStr, { contact_id });
+
+    const contactTypeQueryStr = `
+    SELECT 
+      id, 
+      type
+    FROM contact_type
+    WHERE id = $(contact_type_id)
+    `
+    const contactType = await db.one(contactTypeQueryStr, { contact_type_id });
+
+    const statusQueryStr = `
+    SELECT 
+      id,
+      status
+    FROM job_status
+    WHERE id = $(job_status_id)
+    `
+    const status = await db.one(statusQueryStr, { job_status_id });
+
+    return {
+      interactionId,
+      appId,
+      contact,
+      contactType,
+      description,
+      status,
+      followUpDate,
+    }
+  } catch (err) {
+    console.error(err.message || err);
+  }
 }
 
 const addUser = async (_, args) => {
@@ -281,6 +370,7 @@ module.exports = {
   addReferral,
   addContactRole,
   addContact,
+  addContactType,
   addJobPosting,
   addJobApplication,
   addInteraction,
