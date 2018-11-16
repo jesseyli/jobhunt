@@ -16,6 +16,7 @@ const {
 const {
   addContact,
   addContactRole,
+  addContactType,
   addJobPosting,
   addPositionLevel,
   addUser,
@@ -75,12 +76,18 @@ const typeDefs = gql`
     role: String
   }
 
+  type ContactType {
+    typeId: Int
+    type: String
+  }
+
   type PositionLevel {
     positionId: Int
     position: String
   }
 
   type Interaction {
+    interactionId: Int
     appId: Int
     contact: Contact
     contactType: String     # ex. phone call, text, etc.
@@ -137,13 +144,14 @@ const typeDefs = gql`
   type Mutation {
     addContactRole(role: String): ContactRole
     addContact(name: String, phoneNumber: String, email: String, roleId: Int): Contact
+    addContactType(type: String): ContactType
     addJobPosting(jobPost: JobPostInput): JobPosting
     addPositionLevel(position: String): PositionLevel
     addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User
     addStatus(newStatus: String): Status
     addReferral(name: String, phoneNumber: String, email: String, jobAppId: Int): Contact
     addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
-  #   addInteraction(details: InteractionInput): Interaction
+    addInteraction(details: InteractionInput): Interaction
   }
 `;
 
@@ -161,6 +169,7 @@ const resolvers = {
   Mutation: {
     addContactRole,
     addContact,
+    addContactType,
     addJobPosting,
     addPositionLevel,
     addUser,
