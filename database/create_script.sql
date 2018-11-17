@@ -1,3 +1,6 @@
+DROP DATABASE jobhunt;
+CREATE DATABASE jobhunt;
+\c jobhunt;
 CREATE EXTENSION citext;
 
 -- Ex. `position_level`: junior / midlevel / senior / non-categorized
@@ -25,6 +28,7 @@ CREATE TABLE job_posting (
   company_name          TEXT NOT NULL,
   post_link             TEXT NOT NULL UNIQUE,
   title                 TEXT NOT NULL,
+  location              TEXT NOT NULL,
   description           TEXT,
   requirement           TEXT,
   salary_range_start    INTEGER,
