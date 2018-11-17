@@ -43,6 +43,7 @@ const typeDefs = gql`
     companyName: String!
     postLink: String!        # URL
     title: String!
+    location: String!
     description: String
     requirement: String
     salaryRangeStart: Int
@@ -108,6 +109,7 @@ const typeDefs = gql`
     companyName: String
     postLink: String         # URL
     title: String
+    location: String
     description: String
     requirement: String
     salaryRangeStart: Int

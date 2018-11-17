@@ -105,6 +105,7 @@ const getJobPostings = async () => {
         company_name,
         post_link,
         title,
+        location,
         description,
         requirement,
         salary_range_start,
