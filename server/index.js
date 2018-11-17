@@ -4,14 +4,18 @@ const { ApolloServer, gql } = require('apollo-server-express');
 require("dotenv").load();
 require("./config/db");
 
+const { gqlGetContactById, gqlGetInteractionById } = require('./resolvers/dbHelpers')
+
 const {
+  demo,
   getContactById,
   getContactRoles,
   getContacts,
   getPositionLevels,
   getJobPostings,
   getAllUsers,
-  getStatuses
+  getStatuses,
+  getJobApplicationById
 } = require('./resolvers/query');
 const {
   addContact,
@@ -23,6 +27,7 @@ const {
   addStatus,
   addReferral,
   addJobApplication,
+
 } = require('./resolvers/mutation');
 
 // Construct a schema, using GraphQL schema language
@@ -76,6 +81,9 @@ const typeDefs = gql`
     role: String
   }
 
+  """
+  *ContactType* refers to "Phone", "Email", "Text", etc.
+  """
   type ContactType {
     typeId: Int
     type: String
@@ -92,7 +100,6 @@ const typeDefs = gql`
     contact: Contact
     contactType: String     # ex. phone call, text, etc.
     description: String
-    status: String          # interviewing, offer, accepted
     followUpDate: String    # Date
   }
 
@@ -114,16 +121,12 @@ const typeDefs = gql`
     referral: Contact
     jobPosting: JobPosting!
     user: User
-  }
-
-  type JobAppStatus {
-    jobApplication: JobApplication
-    status: String                  # based on the status table
-    followUpDate: String            # Date
-    offer: Int                      # Will be null until it is given
     contacts: [Contact]
     interactions: [Interaction] 
+    status: String                  # based on the status table
+    offer: Int                      # Will be null until it is given
   }
+
   
   type Status {
     statusId: Int
@@ -131,6 +134,7 @@ const typeDefs = gql`
   }
   
   type Query {
+    demo: String
     getContactById(id: Int): Contact
     getContactRoles: [ContactRole]
     getContacts: [Contact]
@@ -138,7 +142,7 @@ const typeDefs = gql`
     getJobPostings: [JobPosting]
     getAllUsers: [User]
     getStatuses: [Status]
-    # getJobAppStatus(jobAppId: Int): JobAppStatus
+    getJobApplicationById(jobAppId: Int): JobApplication
   }
 
   type Mutation {
@@ -150,7 +154,7 @@ const typeDefs = gql`
     addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User
     addStatus(newStatus: String): Status
     addReferral(name: String, phoneNumber: String, email: String, jobAppId: Int): Contact
-    addJobApplication(postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
+    addJobApplication(userId: Int!, postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
     addInteraction(details: InteractionInput): Interaction
   }
 `;
@@ -158,13 +162,31 @@ const typeDefs = gql`
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
+    demo,
     getContactById,
     getContacts,
     getContactRoles,
     getPositionLevels,
     getJobPostings,
     getAllUsers,
-    getStatuses
+    getStatuses,
+    getJobApplicationById
+  },
+  Interaction: {
+    contact: obj => {
+      console.log("OBJ HERE!", obj)
+      return gqlGetContactById(obj.contact)
+    }
+  },
+  JobApplication: {
+    contacts: obj => {
+      let contacts = obj.contacts.map(contactId => gqlGetContactById(contactId))
+      return Promise.all(contacts);
+    },
+    interactions: obj => { 
+      let interactions = obj.interactions.map(interactionId => gqlGetInteractionById(interactionId));
+      return Promise.all(interactions);
+    }
   },
   Mutation: {
     addContactRole,
