@@ -1,5 +1,7 @@
 const db = require("../config/db");
 
+const { gqlGetJobApplicationById } = require('./dbHelpers')
+
 const getContactById = async (_, args) => {
   try {
     const queryStr = `
@@ -181,12 +183,30 @@ const getStatuses = async () => {
     const statuses = await db.any(queryStr);
 
     return statuses.map(({ id, status }) => ({ statusId: id, status }));
-    
+
   } catch (err) {
     console.error(err.message || err);
   }
 }
 
+const getJobApplicationById = async (_, args) => {
+  try {
+    let { jobAppId } = args;
+
+    let jobApplication = await gqlGetJobApplicationById(jobAppId)
+
+    console.log("JOB APP:", jobApplication)
+    return jobApplication;
+  } catch (err) {
+    console.error(err.message || err);
+  }
+}
+
+
+const demo = async () => {
+  // console.log(await Promise.all([getJobPostingById(1), getUserById(1), _getContactById(2)]))
+  return "hello"
+}
 
 module.exports = {
   getContacts,
@@ -195,5 +215,7 @@ module.exports = {
   getPositionLevels,
   getJobPostings,
   getAllUsers,
-  getStatuses
+  getStatuses,
+  getJobApplicationById,
+  demo
 }

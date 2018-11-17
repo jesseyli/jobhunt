@@ -50,7 +50,8 @@ CREATE TABLE job_application (
   job_posting_id  INTEGER REFERENCES job_posting (id),
   user_id         INTEGER REFERENCES user_account (id) ON DELETE CASCADE,
   referral_id     INTEGER REFERENCES contact_role (id),
-  offer           INTEGER
+  offer           INTEGER,
+  job_status_id   INTEGER NOT NULL
 );
 
 
@@ -72,7 +73,6 @@ CREATE TABLE interaction (
   contact_id            INTEGER REFERENCES contact (id) NOT NULL,
   job_application_id    INTEGER REFERENCES job_application (id) NOT NULL,
   contact_type_id       INTEGER REFERENCES contact_type (id) NOT NULL,
-  job_status_id         INTEGER REFERENCES job_status (id) NOT NULL,
   follow_up_date        TIMESTAMPTZ,
   log                   TEXT
 );
