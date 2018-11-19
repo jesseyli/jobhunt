@@ -4,6 +4,12 @@ const { ApolloServer, gql } = require('apollo-server-express');
 require("dotenv").load();
 require("./config/db");
 
+const cheerio = require('cheerio');
+
+const axios = require('axios');
+
+
+
 const { gqlGetContactById, gqlGetInteractionById } = require('./resolvers/dbHelpers')
 
 const {
@@ -182,7 +188,7 @@ const resolvers = {
       let contacts = obj.contacts.map(contactId => gqlGetContactById(contactId))
       return Promise.all(contacts);
     },
-    interactions: obj => { 
+    interactions: obj => {
       let interactions = obj.interactions.map(interactionId => gqlGetInteractionById(interactionId));
       return Promise.all(interactions);
     }
@@ -203,6 +209,22 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 
 const app = express();
+
+// web scraping demo
+app.use('/', async (req, res) => {
+  try {
+    let { data } = await axios.get('https://jobs.capitalgroup.com/job/Irvine-Database-Engineering-Associate-CA-92610/495270400/?feedId=172500&utm_source=Indeed&utm_campaign=CapitalGroup_Indeed');
+
+    const $ = cheerio.load(data, { normalizeWhitespace: true })
+
+    console.log($('.job').text());
+
+    res.send($('ul li').text());
+  } catch (err) {
+    console.error(err.message || err);
+  }
+})
+
 server.applyMiddleware({ app });
 
 app.listen({ port: 4000 }, () =>
