@@ -219,11 +219,6 @@ const gqlGetJobApplicationById = async jobAppId => {
       offer
     } = await db.one(queryStr, { jobAppId });
 
-    console.log("OFFER:", offer)
-    console.log("STATUS:", status)
-    console.log("REFERRALID:", referral_id)
-    console.log("DATE:", dateApplied)
-
     let [jobPosting, user, referral, interactions, contacts] = await Promise.all([
       gqlGetJobPostingById(job_posting_id),
       gqlGetUserById(user_id),

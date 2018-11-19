@@ -5,12 +5,20 @@ import Table from './components/Table';
 
 import { pages } from './resources/FormDetails';
 
+import Modal from './components/Modal';
+
 class App extends Component {
   state = {
     rows: [
       [{ name: "firstName", type: "text", required: true, value: "Phillip" }, { name: "lastName", type: "text", required: true, value: "Ngo" }, { name: "city", type: "text", required: true, value: "Westminster" }, { name: "state", type: "text", required: true, value: "CA" }]
-    ]
+    ],
+    show: false
   }
+
+  showModal = () => this.setState({ show: true })
+
+  hideModal = () => this.setState({ show: false })
+
   render() {
     return (
       <div>
@@ -20,11 +28,13 @@ class App extends Component {
           accessor="value"
           onClick={row => console.log("CLICKED:", row)}
         />
-        <MultiPartForm
-          submit={result => this.setState({ rows: [...this.state.rows, result] })}
-          pages={pages}
-        />
-
+        <button onClick={this.showModal}>Add Job</button>
+        <Modal show={this.state.show} handleClose={this.hideModal}>
+          <MultiPartForm
+            submit={result => this.setState({ rows: [...this.state.rows, result], show: false })}
+            pages={pages}
+          />
+        </Modal>
       </div>
     );
   }
