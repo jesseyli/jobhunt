@@ -175,10 +175,7 @@ const resolvers = {
     getJobApplicationById
   },
   Interaction: {
-    contact: obj => {
-      console.log("OBJ HERE!", obj)
-      return gqlGetContactById(obj.contact)
-    }
+    contact: obj => gqlGetContactById(obj.contact)
   },
   JobApplication: {
     contacts: obj => {
