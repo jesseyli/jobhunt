@@ -412,7 +412,6 @@ const addJobApplication = async (_, args) => {
     INNER JOIN contact_role ON contact_role.id = contact.contact_role_id
     WHERE contact.id = $(contactId)
     `;
-
     let contactReferral = await db.one(contactQuery, { contactId: referral_id });
     
     let contactReferralObject = {
@@ -432,14 +431,14 @@ const addJobApplication = async (_, args) => {
     description,
     requirement,
     salary_range_start,
-    salary_range_end,
+    salary_range_end
     FROM job_posting
+    WHERE 
+    job_posting.id = $(job_posting_id)
     `;
 
     // Not entirely sure if I need the second argument 'args' here?
-    let jobPosting = await db.one(jobPostingQuery, args);
-
-    console.log('JOB POSTING', jobPosting)
+    let jobPosting = await db.one(jobPostingQuery, { job_posting_id });
 
     let {
       company_name,
@@ -467,16 +466,18 @@ const addJobApplication = async (_, args) => {
 
     const userQuery = `
     SELECT
-    username
-    name
-    email
-    phone_number
+    username,
+    name,
+    email,
+    phone_number,
     position_level_id
     FROM 
     user_account
+    WHERE
+    user_account.id = $(user_id)
     `;
 
-    let user = await db.one(userQuery, args)
+    let user = await db.one(userQuery, { user_id })
 
     let {
       name,
