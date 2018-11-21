@@ -1,37 +1,77 @@
 export const pages = [
   [
     {
-      title: 'Job Posting',
-      name: 'jobPosting',
+      title: 'Posting Link',
+      name: 'postLink',
       type: 'text',
       required: true,
-      placeholder: 'enter job posting link...'
     },
     {
       title: 'Job Title',
       name: 'jobTitle',
       type: 'text',
       required: true,
-      placeholder: 'enter job title...'
+      placeholder: 'Software Engineer, DevOps Engineer, etc...'
     },
     {
-      title: 'Job Description',
-      name: 'jobDescription',
+      title: 'Company Name',
+      name: 'companyName',
       type: 'text',
       required: true,
-      placeholder: 'enter job description...'
+      placeholder: 'Apple, Facebook, etc...'
     },
     {
-      title: 'Date Applied',
-      name: 'dateApplied',
-      type: 'datetime-local',
-      required: true
+      title: 'Position Level',
+      name: 'positionLevel',
+      type: 'text',
+      required: true,
+      placeholder: 'Entry, Mid, Senior...'
+    },
+    {
+      title: 'Requirements',
+      name: 'requirements',
+      type: 'text',
+      required: true,
+      placeholder: 'Bachelors, Node.js, JavaScript, C++, etc...'
+    },
+    {
+      title: 'Salary Range',
+      name: 'salaryRange',
+      type: 'number',
+      required: false,
+      placeholder: '75k-100k'
     },
     {
       title: 'Next Follow-up Date',
       name: 'followUp',
       type: 'datetime-local',
       required: true
+    },
+    {
+      title: 'Description',
+      name: 'description',
+      type: 'textarea',
+      required: true
+    },
+  ],
+  [
+    {
+      title: 'Recruiter Name',
+      name: 'recruiterName',
+      type: 'text',
+      required: false,
+    },
+    {
+      title: 'Recruiter Email',
+      name: 'recruiterEmail',
+      type: 'text',
+      required: false,
+    },
+    {
+      title: 'Recruiter Phone',
+      name: 'recruiterPhone',
+      type: 'text',
+      required: false,
     }
   ],
   [
@@ -40,14 +80,14 @@ export const pages = [
       name: 'city',
       type: 'text',
       required: true,
-      placeholder: 'enter city...'
+      placeholder: 'San Francisco, Seattle, etc...'
     },
     {
       title: 'State',
       name: 'state',
       type: 'text',
       required: true,
-      placeholder: 'enter state...'
+      placeholder: 'CA, WA, etc...'
     }
-  ]
+  ],
 ]

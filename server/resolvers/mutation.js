@@ -89,7 +89,7 @@ const addJobPosting = async (_, { jobPost }) => {
         requirement,
         salary_range_start,
         salary_range_end,
-        position_level_id      
+        position_level_id,      
       )
       VALUES
       (
@@ -362,6 +362,156 @@ const addReferral = async (_, args) => {
 }
 const addJobApplication = async (_, args) => {
   try {
+    const insertStr = `
+      INSERT INTO job_application(
+        user_id,
+        job_posting_id,
+        date_applied,
+        referral_id,
+        offer,
+        job_status_id
+      )
+      VALUES(
+        $(userId),
+        $(postingId),
+        $(time),
+        $(referralId),
+        $(offer),
+        $(jobStatusId)
+      )
+      RETURNING
+        id,
+        user_id,
+        job_posting_id,
+        date_applied,
+        referral_id,
+        offer,
+        job_status_id
+    `;
+    let jobApplication = await db.one(insertStr, args);
+
+    let {
+      id,
+      user_id,
+      job_posting_id,
+      date_applied,
+      referral_id,
+      offer,
+      job_status_id
+    } = jobApplication;
+
+    const contactQuery = `
+    SELECT 
+    contact.id,
+    name,
+    phone_number,
+    email,
+    contact_role_id,
+    contact_role.role
+    FROM contact
+    INNER JOIN contact_role ON contact_role.id = contact.contact_role_id
+    WHERE contact.id = $(contactId)
+    `;
+    let contactReferral = await db.one(contactQuery, { contactId: referral_id });
+    
+    let contactReferralObject = {
+      referenceId: contactReferral.id,
+      name: contactReferral.name,
+      phoneNumber: contactReferral.phone_number,
+      email: contactReferral.email,
+      role: contactReferral.role
+    }
+
+    let jobPostingQuery = `
+    SELECT
+    company_name,
+    post_link,
+    title,
+    location,
+    description,
+    requirement,
+    salary_range_start,
+    salary_range_end
+    FROM job_posting
+    WHERE 
+    job_posting.id = $(job_posting_id)
+    `;
+
+    let jobPosting = await db.one(jobPostingQuery, { job_posting_id });
+
+    let {
+      company_name,
+      post_link,
+      title,
+      location,
+      description,
+      requirement,
+      salaryRangeStart,
+      salaryRangeEnd,
+      positionLevel 
+    } = jobPosting;
+
+    let jobPostingObject = {
+      companyName: company_name,
+      postLink: post_link,
+      title,
+      location,
+      description,
+      requirement,
+      salaryRangeStart,
+      salaryRangeEnd,
+      positionLevel,
+    }
+
+    const userQuery = `
+    SELECT
+    username,
+    name,
+    email,
+    phone_number,
+    position_level_id
+    FROM 
+    user_account
+    WHERE
+    user_account.id = $(user_id)
+    `;
+
+    let user = await db.one(userQuery, { user_id })
+
+    let {
+      name,
+      phone_number,
+      email,
+      position_level_id
+    } = user
+
+    let userObject = {
+      name,
+      email,
+      phoneNumber: phone_number,
+      position: position_level_id
+    }
+
+    const jobStatusQuery = `
+    SELECT
+    status
+    FROM
+    job_status
+    WHERE
+    job_status.id = $(job_status_id)
+    `;
+
+    const jobStatus = await db.one(jobStatusQuery, { job_status_id });
+
+    return {
+      id,
+      dateApplied: date_applied,
+      referral: contactReferralObject,
+      jobPosting: jobPostingObject,
+      user: userObject,
+      status: jobStatus,
+      offer
+    }
 
   } catch (err) {
     console.error(err.message || err);

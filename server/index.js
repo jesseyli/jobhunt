@@ -8,8 +8,6 @@ const cheerio = require('cheerio');
 
 const axios = require('axios');
 
-
-
 const { gqlGetContactById, gqlGetInteractionById } = require('./resolvers/dbHelpers')
 
 const {
@@ -162,7 +160,7 @@ const typeDefs = gql`
     addUser(name: String, username: String, phoneNumber: String, email: String, positionId: Int): User
     addStatus(newStatus: String): Status
     addReferral(name: String, phoneNumber: String, email: String, jobAppId: Int): Contact
-    addJobApplication(userId: Int!, postingId: Int!, time: String!, referralId: Int): JobApplication     # time should be type Date or Timestamp
+    addJobApplication(userId: Int!, postingId: Int!, time: String!, referralId: Int, offer: Int, jobStatusId: Int!): JobApplication     # time should be type Date or Timestamp
     addInteraction(details: InteractionInput): Interaction
   }
 `;
@@ -211,19 +209,20 @@ const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
 
 // web scraping demo
-app.use('/', async (req, res) => {
-  try {
-    let { data } = await axios.get('https://jobs.capitalgroup.com/job/Irvine-Database-Engineering-Associate-CA-92610/495270400/?feedId=172500&utm_source=Indeed&utm_campaign=CapitalGroup_Indeed');
+// app.use('/', async (req, res) => {
+//   try {
+//     let { data } = await axios.get('https://jobs.capitalgroup.com/job/Irvine-Database-Engineering-Associate-CA-92610/495270400/?feedId=172500&utm_source=Indeed&utm_campaign=CapitalGroup_Indeed');
 
-    const $ = cheerio.load(data, { normalizeWhitespace: true })
+//     const $ = cheerio.load(data, { normalizeWhitespace: true })
 
-    console.log($('.job').text());
+//     console.log($('.job').text());
 
-    res.send($('ul li').text());
-  } catch (err) {
-    console.error(err.message || err);
-  }
-})
+//     res.send($('ul li').text());
+//   } catch (err) {
+//     console.error(err.message || err);
+//   }
+// })
+
 
 server.applyMiddleware({ app });
 

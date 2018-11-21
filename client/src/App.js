@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <div>
         <Table
-          columns={['first name', 'last name', 'city', 'state']}
+          columns={['Posting Link', 'Job Title', 'Company Name', 'Position Level', 'Description', 'Requirements', 'Salary Range', 'Next Follow-up Date', 'Recruiter Name', 'Recruiter Email', 'Recruiter Phone']}
           rows={this.state.rows}
           accessor="value"
           onClick={row => console.log("CLICKED:", row)}
