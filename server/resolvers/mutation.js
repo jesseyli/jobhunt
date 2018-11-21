@@ -437,7 +437,6 @@ const addJobApplication = async (_, args) => {
     job_posting.id = $(job_posting_id)
     `;
 
-    // Not entirely sure if I need the second argument 'args' here?
     let jobPosting = await db.one(jobPostingQuery, { job_posting_id });
 
     let {
@@ -493,16 +492,26 @@ const addJobApplication = async (_, args) => {
       position: position_level_id
     }
 
+    const jobStatusQuery = `
+    SELECT
+    status
+    FROM
+    job_status
+    WHERE
+    job_status.id = $(job_status_id)
+    `;
+
+    const jobStatus = await db.one(jobStatusQuery, { job_status_id });
+
     return {
       id,
       dateApplied: date_applied,
       referral: contactReferralObject,
       jobPosting: jobPostingObject,
       user: userObject,
-      status: job_status_id,
+      status: jobStatus,
       offer
     }
-
 
   } catch (err) {
     console.error(err.message || err);
