@@ -1,5 +1,16 @@
+.form-container {
+  margin: 2rem;
+}
+
 input {
   display: block;
-  margin: 5px;
-  padding: 3px;
+  padding: .3rem;
+  margin: .5rem;
 }
+
+label {
+  padding: .3rem;
+  margin: .5rem;
+}
+
+

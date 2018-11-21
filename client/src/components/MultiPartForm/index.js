@@ -28,21 +28,37 @@ class MultiPartFrom extends Component {
   displayPage = () => {
     let { pages, currentPage } = this.state;
 
-    return currentPage === pages.length - 1
-      ? (
-        <MegaForm
-          submitText="Submit"
-          submit={this.finalSubmit}
-          inputs={pages[pages.length - 1]}
-        />
-      )
-      : (
-        <MegaForm
-          submitText="Next"
-          submit={this.changePage}
-          inputs={pages[currentPage]}
-        />
-      )
+    switch (currentPage) {
+      case 0:
+        return (
+          <MegaForm
+            submitText="Next"
+            submit={this.changePage}
+            inputs={pages[currentPage]}
+            title="Add a job"
+          />
+        )
+      case 1:
+        return (
+          <MegaForm
+            submitText="Next"
+            submit={this.changePage}
+            inputs={pages[pages.length - 1]}
+            title="Add a location"
+          />
+        )
+      case 2:
+        return (
+          <MegaForm
+            submitText="Submit"
+            submit={this.finalSubmit}
+            inputs={pages[1]}
+            title="Add recruiter information"
+          />
+        )
+      default:
+        return
+    }
   }
 
   render() {

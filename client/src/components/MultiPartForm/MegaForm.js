@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import { addJobApplication } from '../../redux/actions'
+import { connect } from 'react-redux'
 import './MegaForm.css';
 
 
@@ -17,7 +18,7 @@ class MegaForm extends Component {
   }
 
   componentDidMount() {
-   this.initializeFields();
+    this.initializeFields();
   }
 
   componentDidUpdate(prevProps) {
@@ -94,19 +95,26 @@ class MegaForm extends Component {
         onChange={this.handleChange}
       />
     )
-
   }
 
   render() {
     const { fields } = this.state;
 
     return (
-      <form onSubmit={this.formSubmit}>
-        {Object.values(fields).map(this.renderInputs)}
-        <button type='submit'>{this.props.submitText}</button>
-      </form>
+      <div className='form-container'>
+        <form onSubmit={this.formSubmit}>
+          <h1 className='form-title'>{this.props.title}</h1>
+          {Object.values(fields).map(this.renderInputs)}
+          <button className='btn' type='submit'>{this.props.submitText}</button>
+        </form>
+      </div>
     );
   }
 }
 
-export default MegaForm;
+// export default MegaForm;
+const mapDispatchToProps = dispatch => ({
+  addJobApplication: job => dispatch(addJobApplication(job))
+})
+
+export default connect(mapDispatchToProps, null)(MegaForm)
