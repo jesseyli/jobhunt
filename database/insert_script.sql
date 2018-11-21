@@ -1,4 +1,6 @@
 \c jobhunt;
+CREATE EXTENSION pgcrypto;
+
 INSERT INTO position_level (role)
 VALUES
   ('internship'),
@@ -50,13 +52,13 @@ VALUES
   ('Amazon', 'http://www.amazon.com', 'AWS Architect', 'Irvine, California', 'looking for people who know AWS', '10+ years', 150000, 200000, 5);
 
 
-INSERT INTO user_account (username, name, email, phone_number, position_level_id)
+INSERT INTO user_account (username, name, email, phone_number, position_level_id, password)
 VALUES
-  ('pattruong', 'patrick truong', 'patrick@gmail.com','7140009000', 3),
-  ('jpaark', 'james park', 'jpark@gmail.com','3104938901', 1),
-  ('pngo', 'phillip ngo', 'pngo@gmail.com','7148982199', 1),
-  ('kmoon', 'kevin moon', 'kmoon@gmail.com','7147321238', 1),
-  ('wyang', 'william yang', 'wyang@gmail.com','6263137876', 2);
+  ('pattruong', 'patrick truong', 'patrick@gmail.com','7140009000', 3, crypt('password', gen_salt('bf', 16))),
+  ('jpaark', 'james park', 'jpark@gmail.com','3104938901', 1, crypt('password', gen_salt('bf', 16))),
+  ('pngo', 'phillip ngo', 'pngo@gmail.com','7148982199', 1, crypt('password', gen_salt('bf', 16))),
+  ('kmoon', 'kevin moon', 'kmoon@gmail.com','7147321238', 1, crypt('password', gen_salt('bf', 16))),
+  ('wyang', 'william yang', 'wyang@gmail.com','6263137876', 2, crypt('password', gen_salt('bf', 16)));
 
 INSERT INTO job_application (date_applied, job_posting_id, user_id, referral_id, offer, job_status_id)
 VALUES

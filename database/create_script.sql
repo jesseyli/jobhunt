@@ -38,9 +38,10 @@ CREATE TABLE job_posting (
 
 CREATE TABLE user_account (
   id                  SERIAL PRIMARY KEY,
-  username            TEXT,
+  username            TEXT UNIQUE NOT NULL,
   name                TEXT NOT NULL,
-  email               CITEXT,
+  email               CITEXT UNIQUE NOT NULL,
+  password            TEXT NOT NULL,
   phone_number        TEXT,
   position_level_id   INTEGER REFERENCES position_level (id),
   UNIQUE (username, email, phone_number)
