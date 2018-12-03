@@ -52,7 +52,7 @@ const getUser = username => {
 const isValidLogin = async (username, password) => {
   try {
     let { password: hashedPassword } = await getUser(username);
-    return bcrypt.compare(password, hashedPassword);
+    return bcrypt.compare(password, hashedPassword);  
   } catch (err) {
     return err;
   }
