@@ -1,4 +1,3 @@
-DROP DATABASE jobhunt;
 CREATE DATABASE jobhunt;
 \c jobhunt;
 CREATE EXTENSION citext;
